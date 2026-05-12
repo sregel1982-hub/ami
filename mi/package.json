@@ -1,0 +1,11 @@
+{
+  "name": "amisearch",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@netlify/functions": "^3.0.0",
+    "@netlify/identity": "^0.1.0"
+  }
+}
