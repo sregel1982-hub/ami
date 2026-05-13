@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - AMISEARCH</title>
+  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: #f8fafc; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <h1>Dashboard 👋</h1>
+      <div id="clerk-user-button"></div>
+    </div>
+
+    <div id="user-info" class="card"></div>
+    <div id="main-content"></div>
+  </div>
+
+  <script>
+    const PUBLISHABLE_KEY = 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXX'; // ← IDE TEDD A CLERK KULCSODAT!
+
+    async function loadDashboard() {
+      const clerk = new Clerk(PUBLISHABLE_KEY);
+      await clerk.load();
+
+      if (!clerk.user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Felhasználói adatok
+      document.getElementById('user-info').innerHTML = `
+        <h2>Üdv újra, ${clerk.user.fullName || clerk.user.username || 'Diák'}!</h2>
+        <p>Email: ${clerk.user.primaryEmailAddress?.emailAddress || ''}</p>
+        <p>Státusz: <strong>Diák</strong> | Előfizetés: <strong>Free</strong></p>
+        <p>Közösségi pontok: <strong>1 250</strong></p>
+      `;
+
+      clerk.mountUserButton(document.getElementById('clerk-user-button'), {
+        afterSignOutUrl: 'index.html'
+      });
+    }
+
+    window.onload = loadDashboard;
+  </script>
+</body>
+</html>
