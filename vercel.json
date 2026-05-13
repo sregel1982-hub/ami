@@ -1,14 +1,6 @@
 {
   "version": 2,
   "buildCommand": "",
-  "outputDirectory": null,
-  "installCommand": "npm install",
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "outputDirectory": ".",
+  "installCommand": "npm install"
 }
