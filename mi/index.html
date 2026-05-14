@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AMISEARCH - Tanulj hatékonyabban</title>
+  <script async src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js">
+    
+  </script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -144,7 +147,14 @@
           <i class="fa-solid fa-graduation-cap text-white text-xl"></i>
         </div>
         <span class="text-2xl font-extrabold gradient-text">AMISEARCH</span>
+      </div><div class="flex items-center space-x-4">
+        <!-- Ide kerül a Clerk gombja -->
+        <div id="user-button"></div>
+        <div id="sign-in-button"></div>
       </div>
+    </div>
+  </div>
+</header>
 
       <!-- Desktop Nav -->
       <nav class="hidden lg:flex items-center space-x-8">
@@ -156,7 +166,37 @@
         <a href="#faq" class="text-gray-700 hover:text-[#6C5CE7] font-medium transition">FAQ</a>
       </nav>
 
-      <!-- Right side -->
+      <!-- Right side --><!-- Right side -->
+<div class="flex items-center space-x-3">
+  <!-- Language Toggle -->
+  <div class="lang-toggle">
+    <button onclick="toggleLang()" class="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition flex items-center space-x-2">
+      <i class="fa-solid fa-globe text-[#6C5CE7]"></i>
+      <span id="langText" class="font-semibold text-sm">HU</span>
+    </button>
+  </div>
+  
+  <!-- Clerk Auth Konténerek -->
+  <div id="auth-wrapper" class="flex items-center space-x-3">
+    <!-- Ide töltődik be a Clerk gombja -->
+    <div id="clerk-button-container"></div>
+  </div>
+</div><script>
+  window.addEventListener('load', async () => {
+    await Clerk.load();
+
+    if (Clerk.user) {
+      // Ha be van jelentkezve, megjeleníti a profil gombot
+      Clerk.mountUserButton(document.getElementById('clerk-button-container'));
+    } else {
+      // Ha nincs, megjeleníti a Belépés gombot
+      document.getElementById('clerk-button-container').innerHTML = 
+        `<button onclick="Clerk.openSignIn()" class="btn-primary px-5 py-2.5 text-white font-semibold rounded-xl">
+           Belépés / Regisztráció
+         </button>`;
+    }
+  });
+</script>
       <div class="flex items-center space-x-3">
         <!-- Language Toggle -->
         <div class="lang-toggle">
@@ -180,7 +220,37 @@
       </div>
     </div>
   </div>
-  
+  <!-- Auth Buttons (Clerk) -->
+        <div id="auth-container" class="flex items-center space-x-3">
+          <!-- Ide tölti be a Clerk a gombokat -->
+        </div>
+        
+        <!-- Mobile Menu -->
+        <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100">
+          <i class="fa-solid fa-bars text-xl text-gray-700"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Clerk inicializálás
+  window.addEventListener('load', async () => {
+    await Clerk.load();
+    const authContainer = document.getElementById('auth-container');
+
+    if (Clerk.user) {
+      // Ha be van jelentkezve: UserButton
+      Clerk.mountUserButton(authContainer);
+    } else {
+      // Ha nincs bejelentkezve: Saját gombok
+      authContainer.innerHTML = `
+        <button onclick="Clerk.openSignIn()" class="hidden md:block px-5 py-2.5 text-[#6C5CE7] font-semibold hover:bg-purple-50 rounded-xl transition">Belépés</button>
+        <button onclick="Clerk.openSignUp()" class="btn-primary px-5 py-2.5 text-white font-semibold rounded-xl">Regisztráció</button>
+      `;
+    }
+  });
+</script>
   <!-- Mobile Menu -->
   <div id="mobileMenu" class="hidden lg:hidden border-t border-gray-100 bg-white">
     <div class="px-4 py-4 space-y-3">
@@ -193,7 +263,22 @@
       <button onclick="openModal('loginModal')" class="block w-full py-2.5 text-[#6C5CE7] font-semibold text-center rounded-xl border-2 border-[#6C5CE7]" data-hu="Belépés" data-en="Login">Belépés</button>
     </div>
   </div>
-</header>
+</header><!-- Mobile Menu -->
+<div id="mobileMenu" class="hidden lg:hidden border-t border-gray-100 bg-white">
+  <div class="px-4 py-4 space-y-3">
+    <a href="#funkciok" class="block py-2 text-gray-700 font-medium" data-hu="Funkciók" data-en="Features">Funkciók</a>
+    <a href="#arak" class="block py-2 text-gray-700 font-medium" data-hu="Árak" data-en="Pricing">Árak</a>
+    <button onclick="openModal('aiTutorModal')" class="block py-2 text-gray-700 font-medium text-left w-full">AI Tutor</button>
+    <a href="#teacher" class="block py-2 text-gray-700 font-medium" data-hu="Teacher Hub" data-en="Teacher Hub">Teacher Hub</a>
+    <a href="#rolunk" class="block py-2 text-gray-700 font-medium" data-hu="Rólunk" data-en="About">Rólunk</a>
+    <a href="#faq" class="block py-2 text-gray-700 font-medium">FAQ</a>
+    
+    <!-- Clerk Auth Mobile -->
+    <button onclick="Clerk.openSignIn()" class="block w-full py-2.5 text-[#6C5CE7] font-semibold text-center rounded-xl border-2 border-[#6C5CE7]">
+      Belépés
+    </button>
+  </div>
+</div>
 
 <!-- Hero Section -->
 <section class="hero-pattern relative pt-12 pb-20 md:pt-20 md:pb-32">
@@ -239,7 +324,10 @@
           </div>
         </div>
       </div>
-      
+      <!-- Hero Section - Regisztrációs gomb módosítása -->
+<button onclick="Clerk.openSignUp()" class="btn-primary px-8 py-4 text-white font-bold rounded-xl text-lg shadow-lg" data-hu="Kezdd el ingyen" data-en="Start for free">
+  Kezdd el ingyen
+</button>
       <!-- Right Content - Upload + Search -->
       <div class="space-y-6">
         <!-- Upload Box -->
@@ -264,7 +352,25 @@
             <div><i class="fa-solid fa-lock text-[#6C5CE7]"></i> <span data-hu="Biztonságos" data-en="Secure">Biztonságos</span></div>
             <div><i class="fa-solid fa-wand-magic-sparkles text-[#6C5CE7]"></i> AI</div>
           </div>
-        </div>
+        </div><!-- Módosított Upload Box -->
+<div id="uploadBox" 
+     class="upload-box rounded-xl p-8 text-center cursor-pointer" 
+     onclick="handleUploadClick()">
+  <input type="file" id="fileInput" class="hidden" accept=".pdf,.docx,.pptx,.jpg,.png" multiple>
+  <!-- ... tartalom ... -->
+</div>
+
+<script>
+function handleUploadClick() {
+  // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+  if (Clerk.user) {
+    document.getElementById('fileInput').click();
+  } else {
+    // Ha nincs, nyissa meg a regisztrációs ablakot
+    Clerk.openSignUp();
+  }
+}
+</script>
         
         <!-- Search Box -->
         <div class="glass-card rounded-2xl p-6 shadow-2xl hover-lift">
@@ -289,7 +395,32 @@
       </div>
     </div>
   </div>
-</section>
+</section>function handleSearch() {
+  const query = document.getElementById('searchInput').value;
+  const resultsDiv = document.getElementById('searchResults');
+  const icon = document.getElementById('searchIcon');
+
+  if (!query.trim()) return;
+
+  // Loading állapot
+  icon.className = 'fa-solid fa-spinner fa-spin';
+  resultsDiv.classList.remove('hidden');
+  resultsDiv.innerText = 'Keresés folyamatban...';
+
+  // API hívás szimuláció
+  fetch(`/api/search?q=${encodeURIComponent(query)}`)
+    .then(res => res.json())
+    .then(data => {
+      resultsDiv.innerText = data.results || 'Nincs találat.';
+    })
+    .catch(() => { resultsDiv.innerText = 'Hiba történt a keresés során.'; })
+    .finally(() => { icon.className = 'fa-solid fa-arrow-right'; });
+}
+
+// Enter billentyű támogatás
+document.getElementById('searchInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') handleSearch();
+});
 
 <!-- Funkciók Section -->
 <section id="funkciok" class="py-20 bg-white">
@@ -355,6 +486,30 @@
         <p class="text-gray-600" data-hu="Kövesd nyomon a fejlődésed. Lásd, miben vagy erős és hol kell még gyakorolnod." data-en="Track your progress. See strengths and areas to practice more.">Kövesd nyomon a fejlődésed. Lásd, miben vagy erős és hol kell még gyakorolnod.</p>
       </div>
     </div>
+  </div> <h3 class="text-xl font-bold mb-3" data-hu="Haladáskövetés" data-en="Progress Tracking">Haladáskövetés</h3>
+        <p class="text-gray-600" data-hu="Kövesd nyomon tanulási folyamatodat részletes statisztikákkal és mérföldkövekkel." data-en="Track your learning progress with detailed statistics and milestones.">Kövesd nyomon tanulási folyamatodat részletes statisztikákkal és mérföldkövekkel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</section> <!-- Feature 2 (Befejezés) -->
+      <div class="p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 hover-lift">
+        <div class="w-14 h-14 bg-gradient-to-br from-[#6C5CE7] to-[#A29BFE] rounded-xl flex items-center justify-center mb-6">
+          <i class="fa-solid fa-circle-question text-white text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3" data-hu="Interaktív kvízek" data-en="Interactive Quizzes">Interaktív kvízek</h3>
+        <p class="text-gray-600" data-hu="Teszteld tudásod automatikusan generált kérdésekkel, amelyek a tananyag legfontosabb részeire fókuszálnak." data-en="Test your knowledge with automatically generated questions focused on key concepts.">Teszteld tudásod automatikusan generált kérdésekkel, amelyek a tananyag legfontosabb részeire fókuszálnak.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 hover-lift">
+        <div class="w-14 h-14 bg-gradient-to-br from-[#6C5CE7] to-[#A29BFE] rounded-xl flex items-center justify-center mb-6">
+          <i class="fa-solid fa-brain text-white text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3" data-hu="AI Tanulótárs" data-en="AI Study Buddy">AI Tanulótárs</h3>
+        <p class="text-gray-600" data-hu="Bármikor kérdezhetsz a tananyaggal kapcsolatban, az AI azonnal választ ad és segít megérteni az összefüggéseket." data-en="Ask anything about your study materials; the AI provides instant answers and helps clarify complex topics.">Bármikor kérdezhetsz a tananyaggal kapcsolatban, az AI azonnal választ ad és segít megérteni az összefüggéseket.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -366,7 +521,43 @@
       <h2 class="text-4xl md:text-5xl font-extrabold mt-6 mb-4" data-hu="Válassz csomagot" data-en="Choose your plan">Válassz csomagot</h2>
       <p class="text-xl text-gray-600" data-hu="Kezdd ingyen, frissíts amikor készen állsz" data-en="Start free, upgrade when you're ready">Kezdd ingyen, frissíts amikor készen állsz</p>
     </div>
-    
+     <div class="grid md:grid-cols-3 gap-8">
+      <!-- Ingyenes csomag -->
+      <div class="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm">
+        <h3 class="text-xl font-bold mb-2" data-hu="Ingyenes" data-en="Free">Ingyenes</h3>
+        <div class="text-4xl font-bold mb-6">0 Ft<span class="text-lg text-gray-500 font-normal">/hó</span></div>
+        <ul class="space-y-4 mb-8 text-gray-600">
+          <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Alapvető AI chat</li>
+          <li><i class="fa-solid fa-check text-green-500 mr-2"></i> 3 jegyzet feltöltése</li>
+        </ul>
+        <button class="w-full py-3 rounded-xl border border-[#6C5CE7] text-[#6C5CE7] font-bold hover:bg-purple-50 transition">Kezdés</button>
+      </div>
+
+      <!-- Pro csomag -->
+      <div class="p-8 bg-[#6C5CE7] rounded-3xl text-white shadow-xl transform md:-translate-y-4">
+        <h3 class="text-xl font-bold mb-2" data-hu="Pro" data-en="Pro">Pro</h3>
+        <div class="text-4xl font-bold mb-6">2.990 Ft<span class="text-lg text-purple-200 font-normal">/hó</span></div>
+        <ul class="space-y-4 mb-8">
+          <li><i class="fa-solid fa-check text-purple-200 mr-2"></i> Korlátlan AI chat</li>
+          <li><i class="fa-solid fa-check text-purple-200 mr-2"></i> Korlátlan jegyzetek</li>
+          <li><i class="fa-solid fa-check text-purple-200 mr-2"></i> Flashcard generálás</li>
+        </ul>
+        <button class="w-full py-3 rounded-xl bg-white text-[#6C5CE7] font-bold">Kiválasztás</button>
+      </div>
+
+      <!-- Prémium csomag -->
+      <div class="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm">
+        <h3 class="text-xl font-bold mb-2" data-hu="Prémium" data-en="Premium">Prémium</h3>
+        <div class="text-4xl font-bold mb-6">4.990 Ft<span class="text-lg text-gray-500 font-normal">/hó</span></div>
+        <ul class="space-y-4 mb-8 text-gray-600">
+          <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Minden Pro funkció</li>
+          <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Személyes mentorálás</li>
+        </ul>
+        <button class="w-full py-3 rounded-xl border border-[#6C5CE7] text-[#6C5CE7] font-bold hover:bg-purple-50 transition">Kiválasztás</button>
+      </div>
+    </div>
+  </div>
+</section>
     <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
       <!-- Free -->
       <div class="bg-white rounded-2xl p-8 shadow-lg hover-lift border-2 border-gray-100">
@@ -403,6 +594,19 @@
           <li class="flex items-start"><i class="fa-solid fa-check mr-3 mt-1"></i><span data-hu="Gondolattérképek" data-en="Mind maps">Gondolattérképek</span></li>
           <li class="flex items-start"><i class="fa-solid fa-check mr-3 mt-1"></i><span data-hu="Villámkártyák" data-en="Flashcards">Villámkártyák</span></li>
         </ul>
+      </div> <h3 class="text-2xl font-bold mb-2 text-white" data-hu="Pro" data-en="Pro">Pro</h3>
+        <p class="text-purple-100 mb-6" data-hu="A legjobb választás diákoknak" data-en="Best choice for students">A legjobb választás diákoknak</p>
+        <div class="mb-6 text-white">
+          <span class="text-5xl font-extrabold">2.990 Ft</span>
+          <span class="text-purple-200" data-hu="/hó" data-en="/mo">/hó</span>
+        </div>
+        <button onclick="openModal('registerModal')" class="w-full py-3 bg-white text-[#6C5CE7] hover:bg-gray-50 font-bold rounded-xl transition mb-8" data-hu="Kezdd el" data-en="Get Started">Kezdd el</button>
+        <ul class="space-y-4 text-white">
+          <li class="flex items-start"><i class="fa-solid fa-check text-yellow-400 mr-3 mt-1"></i><span data-hu="Korlátlan dokumentum feltöltés" data-en="Unlimited document uploads">Korlátlan dokumentum feltöltés</span></li>
+          <li class="flex items-start"><i class="fa-solid fa-check text-yellow-400 mr-3 mt-1"></i><span data-hu="Fejlett AI elemzés" data-en="Advanced AI analysis">Fejlett AI elemzés</span></li>
+          <li class="flex items-start"><i class="fa-solid fa-check text-yellow-400 mr-3 mt-1"></i><span data-hu="Korlátlan AI chat" data-en="Unlimited AI chat">Korlátlan AI chat</span></li>
+          <li class="flex items-start"><i class="fa-solid fa-check text-yellow-400 mr-3 mt-1"></i><span data-hu="Vizsga szimulátor" data-en="Exam simulator">Vizsga szimulátor</span></li>
+        </ul>
       </div>
       
       <!-- Team -->
@@ -424,7 +628,7 @@
       </div>
     </div>
   </div>
-</section>
+</section><h3 class="text-2xl font-bold mb-2" data-hu="Csapat" data-en="Team">Team</h3>
 
 <!-- Teacher Hub Section -->
 <section id="teacher" class="py-20 bg-white">
@@ -477,6 +681,25 @@
       </div>
     </div>
   </div>
+</section><div class="flex items-start">
+            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+              <i class="fa-solid fa-file-pen text-[#6C5CE7] text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg mb-1" data-hu="Automatikus értékelés" data-en="Auto Grading">Automatikus értékelés</h4>
+              <p class="text-gray-600" data-hu="Az AI kiértékeli a beadott feladatokat, időt spórolva neked." data-en="AI evaluates submitted assignments, saving you time.">Az AI kiértékeli a beadott feladatokat, időt spórolva neked.</p>
+            </div>
+          </div>
+        </div>
+        
+        <button onclick="openModal('registerModal')" class="px-8 py-4 bg-[#6C5CE7] text-white font-bold rounded-xl hover:bg-[#5b4bc4] transition" data-hu="Kezdd el ingyen" data-en="Get started for free">Kezdd el ingyen</button>
+      </div>
+      
+      <div class="relative">
+        <img src="teacher-dashboard.png" alt="Teacher Dashboard" class="rounded-2xl shadow-2xl">
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- Rólunk Section -->
@@ -503,7 +726,12 @@
       </div>
     </div>
   </div>
-</section>
+</section>gradient-text {
+  background: linear-gradient(to right, #6C5CE7, #a29bfe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+The code is clean and ready for integration.
 
 <!-- FAQ Section -->
 <section id="faq" class="py-20 bg-white">
@@ -555,7 +783,22 @@
       </div>
     </div>
   </div>
+</section> <div class="faq-answer text-gray-600 hidden">
+          <p data-hu="Igen, az adataidat titkosítva tároljuk, és harmadik fél számára nem adjuk ki. Az AMISEARCH kiemelten kezeli a felhasználói adatvédelmet." data-en="Yes, your data is stored encrypted and is not shared with third parties. AMISEARCH prioritizes user data privacy.">Igen, az adataidat titkosítva tároljuk, és harmadik fél számára nem adjuk ki. Az AMISEARCH kiemelten kezeli a felhasználói adatvédelmet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+
+<script>
+  function toggleFaq(element) {
+    const answer = element.querySelector('.faq-answer');
+    const icon = element.querySelector('i');
+    answer.classList.toggle('hidden');
+    icon.classList.toggle('rotate-180');
+  }
+</script>
 
 <!-- Footer -->
 <footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
@@ -577,7 +820,38 @@
           <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-[#6C5CE7] rounded-lg flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
         </div>
       </div>
-      
+       <!-- Links -->
+      <div>
+        <h4 class="text-white font-bold mb-6" data-hu="Oldalak" data-en="Pages">Oldalak</h4>
+        <ul class="space-y-4">
+          <li><a href="#home" class="hover:text-[#6C5CE7] transition">Home</a></li>
+          <li><a href="#features" class="hover:text-[#6C5CE7] transition" data-hu="Funkciók" data-en="Features">Funkciók</a></li>
+          <li><a href="#faq" class="hover:text-[#6C5CE7] transition">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div>
+        <h4 class="text-white font-bold mb-6" data-hu="Jogi információk" data-en="Legal">Jogi információk</h4>
+        <ul class="space-y-4">
+          <li><a href="#" class="hover:text-[#6C5CE7] transition" data-hu="Adatvédelmi irányelvek" data-en="Privacy Policy">Adatvédelmi irányelvek</a></li>
+          <li><a href="#" class="hover:text-[#6C5CE7] transition" data-hu="Felhasználási feltételek" data-en="Terms of Service">Felhasználási feltételek</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h4 class="text-white font-bold mb-6" data-hu="Kapcsolat" data-en="Contact">Kapcsolat</h4>
+        <p class="text-sm mb-4">hello@amisearch.com</p>
+        <p class="text-sm">Budapest, Magyarország</p>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 pt-8 text-center text-sm">
+      <p>&copy; 2024 AMISEARCH. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
       <!-- Legal -->
       <div>
         <h4 class="text-white font-bold mb-4" data-hu="Jogi" data-en="Legal">Jogi</h4>
@@ -598,7 +872,16 @@
           <li><a href="#" class="hover:text-white transition" data-hu="Karrier" data-en="Careers">Karrier</a></li>
           <li><a href="#" class="hover:text-white transition" data-hu="Blog" data-en="Blog">Blog</a></li>
         </ul>
+      </div> <li><a href="#" class="hover:text-white transition" data-hu="Blog" data-en="Blog">Blog</a></li>
+        </ul>
       </div>
+    </div>
+
+    <div class="border-t border-gray-800 pt-8 text-center text-sm">
+      <p>&copy; 2024 AMISEARCH. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
       
       <!-- Universities -->
       <div>
@@ -613,7 +896,7 @@
     </div>
     
     <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-      <p>&copy; 2024 AMISEARCH. <span data-hu="Minden jog fenntartva." data-en="All rights reserved.">Minden jog fenntartva.</span></p>
+      <p>&copy; 2026 AMISEARCH. <span data-hu="Minden jog fenntartva." data-en="All rights reserved.">Minden jog fenntartva.</span></p>
       <div class="flex items-center space-x-2 mt-4 md:mt-0">
         <i class="fa-solid fa-envelope text-[#6C5CE7]"></i>
         <a href="mailto:info@amisearch.org" class="hover:text-white transition">info@amisearch.org</a>
@@ -660,6 +943,13 @@
       </div>
     </div>
   </div>
+</div> <input type="text" id="chatInput" placeholder="Írd be a kérdésed..." class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-[#6C5CE7] focus:ring-2 focus:ring-[#6C5CE7]/20 outline-none transition">
+        <button class="bg-[#6C5CE7] text-white px-6 py-3 rounded-xl hover:bg-[#5b4bc4] transition">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Login Modal -->
@@ -694,6 +984,15 @@
       <p class="text-center text-sm text-gray-600">
         <span data-hu="Nincs még fiókod?" data-en="Don't have an account?">Nincs még fiókod?</span>
         <button type="button" onclick="switchToRegister()" class="text-[#6C5CE7] font-semibold hover:underline" data-hu="Regisztrálj" data-en="Sign up">Regisztrálj</button>
+      </p>
+    </form>
+  </div>
+</div> bg-[#6C5CE7] text-white py-3 rounded-xl font-semibold hover:bg-[#5b4bc4] transition flex items-center justify-center">
+        <span data-hu="Bejelentkezés" data-en="Login">Bejelentkezés</span>
+      </button>
+      <p class="text-center text-sm text-gray-600">
+        <span data-hu="Nincs még fiókod?" data-en="Don't have an account?">Nincs még fiókod?</span>
+        <button type="button" onclick="openModal('registerModal')" class="text-[#6C5CE7] font-semibold hover:underline ml-1" data-hu="Regisztráció" data-en="Register">Regisztráció</button>
       </p>
     </form>
   </div>
@@ -739,7 +1038,21 @@
 
 <script>
   window.currentLang = 'hu';
-  window.chatHistory = [];
+  window.chatHistory = []; ass="text-sm text-gray-600">
+          <span data-hu="Elfogadom az" data-en="I accept the">Elfogadom az</span> 
+          <a href="#" class="text-[#6C5CE7] hover:underline" data-hu="ÁSZF-et" data-en="Terms of Service">ÁSZF-et</a>.
+        </label>
+      </div>
+      <button type="submit" id="registerSubmitBtn" class="w-full bg-[#6C5CE7] text-white py-3 rounded-xl font-semibold hover:bg-[#5b4bc4] transition">
+        <span data-hu="Regisztráció" data-en="Sign Up">Regisztráció</span>
+      </button>
+      <p class="text-center text-sm text-gray-600">
+        <span data-hu="Már van fiókod?" data-en="Already have an account?">Már van fiókod?</span>
+        <button type="button" onclick="openModal('loginModal')" class="text-[#6C5CE7] font-semibold hover:underline ml-1" data-hu="Belépés" data-en="Login">Belépés</button>
+      </p>
+    </form>
+  </div>
+</div>
 
   // --- UI and other non-auth logic ---
   window.hideLoginMsgs = function() {
@@ -813,7 +1126,16 @@
       el.classList.add('active');
       el.querySelector('.fa-chevron-down').style.transform = 'rotate(180deg)';
     }
-  }
+  }document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal(modal.id);
+      }
+    });
+  });
+
+  // Initialize language
+  window.currentLang = 'hu';
 
   // --- Upload Box Drag & Drop ---
   const uploadBox = document.getElementById('uploadBox');
@@ -844,7 +1166,18 @@
     if (files.length > 0) {
       alert(window.currentLang === 'hu' ? files.length + ' fájl kiválasztva!' : files.length + ' file(s) selected!');
     }
-  }
+  } // --- File Upload UI Feedback ---
+  window.handleFiles = function(files) {
+    if (files.length > 0) {
+      const uploadText = document.getElementById('uploadText');
+      if (uploadText) {
+        uploadText.textContent = window.currentLang === 'hu' 
+          ? `${files.length} fájl kiválasztva: ${files[0].name}` 
+          : `${files.length} file(s) selected: ${files[0].name}`;
+      }
+      console.log('Files ready for upload:', files);
+    }
+  };
 
   // --- AI Chat (streaming) ---
   function escapeHtml(text) {
@@ -903,7 +1236,20 @@
   document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') window.sendMessage();
   });
+ target.innerHTML = escapeHtml(fullText) + '<span class="text-gray-400 animate-pulse">▋</span>';
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
 
+      target.innerHTML = escapeHtml(fullText);
+      window.chatHistory.push({ role: 'assistant', content: fullText });
+    } catch (err) {
+      document.getElementById(aiMsgId).textContent = window.currentLang === 'hu' 
+        ? 'Hiba történt a válasz lekérésekor.' 
+        : 'Error fetching response.';
+    }
+  };
+
+  window.chatHistory = [];
   // --- Search (streaming) ---
   window.searchAbort = null;
 
@@ -966,7 +1312,17 @@
 </script>
 
 <script type="module">
-  import { login, signup, logout, getUser, handleAuthCallback, requestPasswordRecovery, onAuthChange, AuthError, MissingIdentityError } from 'https://esm.sh/@netlify/identity@0.1';
+  import { login, signup, logout, getUser, handleAuthCallback, requestPasswordRecovery, onAuthChange, AuthError, MissingIdentityError } from 'https://esm.sh/@netlify/identity@0.1';// Import auth functions
+  import { login, signup, logout, checkAuth } from './auth.js';
+
+  // Attach auth handlers to window for global access
+  window.login = login;
+  window.signup = signup;
+  window.logout = logout;
+
+  // Check auth state on load
+  document.addEventListener('DOMContentLoaded', checkAuth);
+</script>
 
   // --- Auth State ---
   function updateAuthUI(user) {
@@ -988,7 +1344,10 @@
       greeting.classList.add('hidden');
       greeting.textContent = '';
     }
-  }
+  } }
+
+  // Export for use in auth.js callbacks
+  window.updateAuthUI = updateAuthUI;
 
   // Init auth on page load
   async function initAuth() {
@@ -1010,7 +1369,17 @@
   });
 
   initAuth();
-
+ // Helper to display UI messages
+  window.showLoginMsg = function(type, message) {
+    const msgBox = document.getElementById('loginMsg');
+    if (!msgBox) return;
+    
+    msgBox.textContent = message;
+    msgBox.className = `p-4 rounded-lg mb-4 ${type === 'loginSuccess' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+    msgBox.classList.remove('hidden');
+    
+    setTimeout(() => msgBox.classList.add('hidden'), 5000);
+  };
   // --- Login ---
   window.handleLogin = async function(e) {
     e.preventDefault();
@@ -1041,7 +1410,15 @@
       btn.textContent = window.currentLang === 'hu' ? 'Belépés' : 'Login';
     }
   }
+  window.hideLoginMsgs = function() {
+    const msgBox = document.getElementById('loginMsg');
+    if (msgBox) msgBox.classList.add('hidden');
+  };
 
+  window.closeModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('hidden');
+  };
   // --- Register ---
   window.handleRegister = async function(e) {
     e.preventDefault();
@@ -1074,7 +1451,19 @@
       btn.disabled = false;
       btn.textContent = window.currentLang === 'hu' ? 'Fiók létrehozása' : 'Create Account';
     }
-  }
+  } window.hideRegisterMsgs = function() {
+    const msgBox = document.getElementById('registerMsg');
+    if (msgBox) msgBox.classList.add('hidden');
+  };
+
+  window.showRegisterMsg = function(type, message) {
+    const msgBox = document.getElementById('registerMsg');
+    if (!msgBox) return;
+    
+    msgBox.textContent = message;
+    msgBox.className = `p-4 rounded-lg mb-4 ${type === 'registerSuccess' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+    msgBox.classList.remove('hidden');
+  };
 
   // --- Logout ---
   window.handleLogout = async function() {
@@ -1103,5 +1492,9 @@
   }
 </script>
 
+</body>
+</html>// Ensure global access to recovery function
+  window.requestPasswordRecovery = requestPasswordRecovery;
+</script>
 </body>
 </html>
